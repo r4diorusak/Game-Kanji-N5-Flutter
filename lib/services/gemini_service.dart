@@ -12,7 +12,7 @@ class GeminiService {
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-2.5-flash',
       apiKey: _apiKey,
       generationConfig: GenerationConfig(
         temperature: 0.7,
@@ -135,6 +135,43 @@ Catatan:
       return _parseJson(cleanText);
     } catch (e) {
       print('❌ Chokai Error: $e');
+      return {
+        "error": e.toString()
+      };
+    }
+  }
+
+  /// Generate Video Comprehension Quiz
+  Future<Map<String, dynamic>> generateVideoQuiz(String word, String meaning) async {
+    final prompt = '''
+$_systemPrompt
+
+Buatkan soal latihan pemahaman video (Video Comprehension) level N5 yang berkaitan dengan kata "$word" (arti: $meaning).
+Bayangkan ada sebuah video pendek di mana dua orang sedang bercakap-cakap menggunakan kata tersebut.
+
+Format Output HARUS JSON valid seperti ini:
+{
+  "question": "Pertanyaan pemahaman tentang situasi dalam percakapan imajiner tersebut (Bahasa Indonesia).",
+  "options": ["Pilihan A (Indonesia)", "Pilihan B (Indonesia)", "Pilihan C (Indonesia)", "Pilihan D (Indonesia)"],
+  "correctAnswerIndex": 0
+}
+
+Catatan:
+- Buat pertanyaan yang menguji pemahaman konteks penggunaan kata tersebut.
+- Output HANYA JSON.
+''';
+
+    try {
+      print('🤖 Video Quiz: Mengirim request...');
+      final response = await _model.generateContent([Content.text(prompt)]);
+      print('✅ Video Quiz: Response diterima');
+      
+      final text = response.text ?? '{}';
+      final cleanText = text.replaceAll('```json', '').replaceAll('```', '').trim();
+      
+      return _parseJson(cleanText);
+    } catch (e) {
+      print('❌ Video Quiz Error: $e');
       return {
         "error": e.toString()
       };

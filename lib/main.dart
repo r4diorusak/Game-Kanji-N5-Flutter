@@ -11,12 +11,17 @@ import 'screens/grammar_screen.dart';
 import 'screens/game_menu_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ),
   );
-  runApp(const KanjiN5App());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(const KanjiN5App());
+  });
 }
 
 class KanjiN5App extends StatelessWidget {

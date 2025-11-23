@@ -137,16 +137,6 @@ class StoryScreen {
                       children: [
                         _buildInteractiveStory(story),
                         const SizedBox(height: 16),
-                        const Center(
-                          child: Text(
-                            '💡 Ketuk kata yang bergaris bawah untuk melihat artinya',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 32),
                         const Divider(thickness: 2),
                         const SizedBox(height: 16),
 
@@ -324,6 +314,9 @@ class StoryScreen {
                               textAlign: TextAlign.center,
                             ),
                           ),
+                        
+                        // Add padding for Android navigation bar
+                        SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
                       ],
                     ),
                   ),
