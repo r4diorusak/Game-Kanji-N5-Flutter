@@ -51,8 +51,8 @@ class GeminiService {
     }
   }
 
-  /// Generate cerita pendek untuk latihan
-  Future<String> generateShortStory(KanjiModel kanji) async {
+  /// Generate cerita pendek dengan pertanyaan untuk latihan Dokkai
+  Future<Map<String, dynamic>> generateShortStory(KanjiModel kanji) async {
     final prompt = '''
 $_systemPrompt
 
@@ -60,29 +60,38 @@ Buatkan cerita pendek sederhana (8-16 kalimat) dalam bahasa Jepang yang mengguna
 Gunakan kosakata level N5.
 
 INSTRUKSI KHUSUS:
-Saya ingin pembaca bisa mengetuk setiap kata untuk melihat cara baca dan artinya.
-Tulis cerita dalam format: KataJepang{CaraBaca(Hiragana) - ArtiIndonesia}
-Bungkus SETIAP kata/frasa dalam cerita dengan format tersebut.
-Jangan sertakan terjemahan terpisah atau Romaji.
-Jangan gunakan spasi antar format jika tidak perlu.
-JANGAN ada kalimat pembuka seperti "Tentu", "Berikut cerita", "Halo", dll.
-LANGSUNG mulai dengan teks cerita Jepang.
+1. Tulis cerita dalam format: KataJepang{CaraBaca(Hiragana) - ArtiIndonesia}
+2. Bungkus SETIAP kata/frasa dalam cerita dengan format tersebut.
+3. Setelah cerita, buat 1 pertanyaan pemahaman dalam bahasa Indonesia
+4. Berikan 4 pilihan jawaban (A, B, C, D) dalam bahasa Indonesia
+5. Tentukan jawaban yang benar (index 0-3)
 
-Contoh output:
+JANGAN ada kalimat pembuka seperti "Tentu", "Berikut cerita", dll.
+LANGSUNG berikan output dalam format JSON berikut:
+
+{
+  "story": "[Cerita dalam format custom dengan {baca-arti}]",
+  "question": "[Pertanyaan pemahaman dalam bahasa Indonesia]",
+  "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+  "correctAnswerIndex": 0
+}
+
+Contoh story:
 私{わたし - Saya}は{は - partikel}学生{がくせい - murid}です{です - sopan}。今日{きょう - Hari ini}は{は - partikel}いい{いい - bagus}天気{てんき - cuaca}です{です - sopan}。
 
-Format output:
-[Cerita dalam format custom]
+Pastikan output adalah JSON yang valid!
 ''';
 
     try {
       print('🤖 Story: Mengirim request...');
       final response = await _model.generateContent([Content.text(prompt)]);
       print('✅ Story: Response diterima');
-      return response.text ?? 'Maaf, tidak bisa membuat cerita saat ini.';
+      
+      final text = response.text ?? '';
+      return _parseJson(text);
     } catch (e) {
       print('❌ Story Error: $e');
-      return 'Error: ${e.toString()}';
+      return {'error': e.toString()};
     }
   }
 
