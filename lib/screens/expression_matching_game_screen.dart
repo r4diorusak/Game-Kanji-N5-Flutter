@@ -28,7 +28,8 @@ class _ExpressionMatchingGameScreenState extends State<ExpressionMatchingGameScr
   void _generateQuestions() {
     final random = Random();
     final shuffled = List<Map<String, dynamic>>.from(expressionQuestions)..shuffle(random);
-    _questions = shuffled; // full list
+    // Take up to 20 questions (or all if less)
+    _questions = shuffled.take(min(20, shuffled.length)).toList();
     _selectedAnswer = null;
     _showResult = false;
     _isCorrect = false;
