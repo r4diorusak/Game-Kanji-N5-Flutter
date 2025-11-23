@@ -27,47 +27,6 @@ class _ExpressionMatchingGameScreenState extends State<ExpressionMatchingGameScr
 
   void _generateQuestions() {
     final random = Random();
-    // Ambil 10 kosa kata acak
-    final List<VocabularyModel> shuffledVocab = List.from(vocabularyData)..shuffle(random);
-    final selectedVocab = shuffledVocab.take(10).toList();
-
-    _questions = selectedVocab.map((vocab) {
-      // Ambil 3 pilihan salah acak
-      final wrongOptions = vocabularyData
-          .where((v) => v.id != vocab.id)
-          .toList()
-          ..shuffle(random);
-      
-      final options = [
-        vocab.word, 
-        wrongOptions[0].word, 
-        wrongOptions[1].word, 
-        wrongOptions[2].word
-      ]..shuffle(random);
-
-      return {
-        'situation': vocab.meaning,
-        'options': options,
-        'correct': vocab.word,
-        'meaning': vocab.meaning,
-      };
-    }).toList();
-  }
-
-  void _checkAnswer() {
-    if (_selectedAnswer == null) return;
-
-    setState(() {
-      _isCorrect = _selectedAnswer == _questions[_currentQuestion]['correct'];
-      if (_isCorrect) _score++;
-      _showResult = true;
-    });
-  }
-
-  void _nextQuestion() {
-    if (_currentQuestion < _questions.length - 1) {
-      setState(() {
-        _currentQuestion++;
         _selectedAnswer = null;
         _showResult = false;
       });
