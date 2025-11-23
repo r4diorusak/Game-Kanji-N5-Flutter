@@ -303,29 +303,36 @@ class _KanjiScreenState extends State<KanjiScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: FlipCard(
                       front: _buildCardFace(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              kanji.character,
-                              style: const TextStyle(
-                                fontSize: 120,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1F2937),
+                        isLearned: isLearned,
+                        onLearnedTap: _toggleLearned,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                kanji.character,
+                                style: const TextStyle(
+                                  fontSize: 120,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1F2937),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 40),
-                            const Text(
-                              'Ketuk untuk melihat arti',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF9CA3AF),
+                              const SizedBox(height: 40),
+                              const Text(
+                                'Ketuk untuk melihat arti',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Color(0xFF9CA3AF),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                       back: _buildCardFace(
+                        isLearned: isLearned,
+                        onLearnedTap: _toggleLearned,
                         child: Column(
                           children: [
                             Expanded(
@@ -427,41 +434,8 @@ class _KanjiScreenState extends State<KanjiScreen> {
               // Controls
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: Column(
+                child: Row(
                   children: [
-                    // Mark as learned button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: _toggleLearned,
-                        icon: Icon(
-                          isLearned ? Icons.check_circle : Icons.circle_outlined,
-                          color: isLearned ? Colors.white : const Color(0xFF6366F1),
-                        ),
-                        label: Text(
-                          isLearned ? 'Sudah Dipelajari' : 'Tandai Sudah Dipelajari',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isLearned ? Colors.white : const Color(0xFF6366F1),
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isLearned
-                              ? const Color(0xFF10B981)
-                              : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Navigation buttons
-                    Row(
-                      children: [
                         Expanded(
                           child: ElevatedButton(
                             onPressed: _currentIndex > 0 ? _previousCard : null,
@@ -521,8 +495,6 @@ class _KanjiScreenState extends State<KanjiScreen> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -534,7 +506,11 @@ class _KanjiScreenState extends State<KanjiScreen> {
     );
   }
 
-  Widget _buildCardFace({required Widget child}) {
+  Widget _buildCardFace({
+    required Widget child,
+    required bool isLearned,
+    required VoidCallback onLearnedTap,
+  }) {
     return Container(
       width: double.infinity,
       height: 500,
@@ -549,7 +525,37 @@ class _KanjiScreenState extends State<KanjiScreen> {
           ),
         ],
       ),
-      child: child,
+      child: Stack(
+        children: [
+          child,
+          Positioned(
+            top: 16,
+            right: 16,
+            child: GestureDetector(
+              onTap: onLearnedTap,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isLearned ? const Color(0xFF10B981) : Colors.grey.shade200,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  isLearned ? Icons.check_circle : Icons.circle_outlined,
+                  color: isLearned ? Colors.white : Colors.grey.shade400,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
