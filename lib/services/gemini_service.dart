@@ -55,7 +55,7 @@ class GeminiService {
     final prompt = '''
 $_systemPrompt
 
-Buatkan cerita pendek sederhana (5-8 kalimat) dalam bahasa Jepang yang menggunakan kanji "${kanji.character}" (arti: ${kanji.meaning}).
+Buatkan cerita pendek sederhana (8-16 kalimat) dalam bahasa Jepang yang menggunakan kanji "${kanji.character}" (arti: ${kanji.meaning}).
 Gunakan kosakata level N5.
 
 INSTRUKSI KHUSUS:

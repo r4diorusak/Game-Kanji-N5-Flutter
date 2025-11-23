@@ -23,7 +23,7 @@ class KanjiN5App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kanji N5 Learning Game',
+      title: 'N5 Go',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
