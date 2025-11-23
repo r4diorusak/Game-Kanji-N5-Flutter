@@ -64,6 +64,8 @@ Tulis cerita dalam format: KataJepang{ArtiIndonesia}
 Bungkus SETIAP kata/frasa dalam cerita dengan format tersebut.
 Jangan sertakan terjemahan terpisah atau Romaji.
 Jangan gunakan spasi antar format jika tidak perlu.
+JANGAN ada kalimat pembuka seperti "Tentu", "Berikut cerita", "Halo", dll.
+LANGSUNG mulai dengan teks cerita Jepang.
 
 Contoh output:
 私{Saya}は{partikel}学生{murid}です{sopan}。今日{Hari ini}は{partikel}いい{bagus}天気{cuaca}です{sopan}。

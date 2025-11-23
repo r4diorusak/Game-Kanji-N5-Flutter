@@ -5,7 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'data/kanji_data.dart';
 import 'models/kanji_model.dart';
 import 'widgets/flip_card.dart';
-import 'screens/ai_chat_screen.dart';
+
 import 'services/gemini_service.dart';
 
 void main() {
@@ -465,25 +465,7 @@ class _KanjiGameScreenState extends State<KanjiGameScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AIChatScreen(kanji: kanji),
-            ),
-          );
-        },
-        backgroundColor: const Color(0xFF6366F1),
-        icon: const Icon(Icons.psychology, color: Colors.white),
-        label: const Text(
-          'Tanya AI',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+
     );
   }
 
