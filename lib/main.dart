@@ -6,6 +6,8 @@ import 'widgets/flip_card.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'screens/chokai_quiz_screen.dart';
 import 'screens/story_screen.dart';
+import 'screens/vocabulary_screen.dart';
+import 'screens/grammar_screen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -32,19 +34,67 @@ class KanjiN5App extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const KanjiGameScreen(),
+      home: const MainScreen(),
     );
   }
 }
 
-class KanjiGameScreen extends StatefulWidget {
-  const KanjiGameScreen({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<KanjiGameScreen> createState() => _KanjiGameScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _KanjiGameScreenState extends State<KanjiGameScreen> {
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = [
+    const KanjiScreen(),
+    const VocabularyScreen(),
+    const GrammarScreen(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        selectedItemColor: const Color(0xFF6366F1),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.text_fields),
+            label: 'Kanji',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Kosa Kata',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Tata Bahasa',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class KanjiScreen extends StatefulWidget {
+  const KanjiScreen({super.key});
+
+  @override
+  State<KanjiScreen> createState() => _KanjiScreenState();
+}
+
+class _KanjiScreenState extends State<KanjiScreen> {
   int _currentIndex = 0;
   final Set<int> _learnedKanji = {};
   final FlutterTts flutterTts = FlutterTts();
