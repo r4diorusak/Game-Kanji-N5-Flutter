@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'data/kanji_data.dart';
 import 'models/kanji_model.dart';
 import 'widgets/flip_card.dart';
-
-import 'services/gemini_service.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'screens/chokai_quiz_screen.dart';
+import 'screens/story_screen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -60,7 +58,7 @@ class _KanjiGameScreenState extends State<KanjiGameScreen> {
 
   Future<void> _initTts() async {
     await flutterTts.setLanguage("ja-JP");
-    await flutterTts.setSpeechRate(0.6); // Adjusted for better pacing
+    await flutterTts.setSpeechRate(0.4); // Slower for N5 learners
     await flutterTts.setVolume(1.0);
     await flutterTts.setPitch(1.0);
     await flutterTts.awaitSpeakCompletion(true); // Wait for completion
@@ -145,322 +143,24 @@ class _KanjiGameScreenState extends State<KanjiGameScreen> {
     });
   }
 
-  Future<void> _generateAndShowStory(KanjiModel kanji) async {
-    // Show loading
-    showModalBottomSheet(
+  void _generateAndShowStory(KanjiModel kanji) {
+    final storyScreen = StoryScreen(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(color: Color(0xFF6366F1)),
-              SizedBox(height: 16),
-              Text('Sedang membuat cerita pendek...'),
-            ],
-          ),
-        ),
-      ),
+      flutterTts: flutterTts,
+      getIsSpeaking: () => isSpeaking,
+      speak: _speak,
     );
-
-    final service = GeminiService();
-    final story = await service.generateShortStory(kanji);
-    print('📝 Raw Story Output:\n$story'); // Debug log
-
-    // Close loading
-    if (mounted) Navigator.pop(context);
-
-    // Show result
-    if (mounted) {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => Container(
-          height: MediaQuery.of(context).size.height * 0.7,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Cerita Pendek (Latihan)',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF6366F1),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          isSpeaking ? Icons.stop_circle_outlined : Icons.volume_up_outlined,
-                          color: const Color(0xFF6366F1),
-                        ),
-                        onPressed: () => _speak(story),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          flutterTts.stop();
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const Divider(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: _buildInteractiveStory(story),
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Center(
-                child: Text(
-                  '💡 Ketuk kata yang bergaris bawah untuk melihat artinya',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    storyScreen.show(kanji);
   }
 
-  Future<void> _generateAndShowChokai(KanjiModel kanji) async {
-    // Show loading
-    showModalBottomSheet(
+  void _generateAndShowChokai(KanjiModel kanji) {
+    final chokaiScreen = ChokaiQuizScreen(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.6,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(color: Color(0xFF6366F1)),
-              SizedBox(height: 16),
-              Text('Sedang membuat soal Chokai...'),
-            ],
-          ),
-        ),
-      ),
+      flutterTts: flutterTts,
+      getIsSpeaking: () => isSpeaking,
+      speak: _speak,
     );
-
-    final service = GeminiService();
-    final quizData = await service.generateChokaiQuiz(kanji);
-    
-    // Close loading
-    if (mounted) Navigator.pop(context);
-
-    if (quizData.isEmpty || quizData.containsKey('error')) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal membuat soal: ${quizData['error'] ?? 'Unknown error'}')),
-        );
-      }
-      return;
-    }
-
-    // Show result
-    if (mounted) {
-      _showChokaiQuizSheet(quizData);
-    }
-  }
-
-  void _showChokaiQuizSheet(Map<String, dynamic> quizData) {
-    final story = quizData['story'] as String;
-    final question = quizData['question'] as String;
-    final options = List<String>.from(quizData['options']);
-    final correctAnswerIndex = quizData['correctAnswerIndex'] as int;
-
-    // Auto play audio when opened
-    _speak(story);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Latihan Chokai (Listening)',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6366F1),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        flutterTts.stop();
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-                const Divider(),
-                
-                // Audio Controls
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.headphones, size: 48, color: Color(0xFF6366F1)),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Dengarkan Cerita',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      ElevatedButton.icon(
-                        onPressed: () => _speak(story),
-                        icon: Icon(isSpeaking ? Icons.stop : Icons.play_arrow),
-                        label: Text(isSpeaking ? 'Stop' : 'Putar Ulang'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6366F1),
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Question
-                Text(
-                  'Pertanyaan:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  question,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // Options
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: options.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      return OutlinedButton(
-                        onPressed: () {
-                          // Check answer
-                          final isCorrect = index == correctAnswerIndex;
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(isCorrect ? 'Benar! 🎉' : 'Salah 😅'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(isCorrect 
-                                    ? 'Hebat! Jawabanmu tepat.' 
-                                    : 'Jawaban yang benar adalah:\n${options[correctAnswerIndex]}'
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Text('Transkrip Cerita:', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 4),
-                                  Text(story, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close dialog
-                                    if (isCorrect) {
-                                      Navigator.pop(context); // Close quiz if correct
-                                    }
-                                  },
-                                  child: Text(isCorrect ? 'Selesai' : 'Coba Lagi'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.all(16),
-                          alignment: Alignment.centerLeft,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          '${String.fromCharCode(65 + index)}. ${options[index]}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF374151),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+    chokaiScreen.show(kanji);
   }
 
   @override
@@ -833,92 +533,4 @@ class _KanjiGameScreenState extends State<KanjiGameScreen> {
     );
   }
 
-  Widget _buildInteractiveStory(String story) {
-    // Remove markdown bold syntax if present
-    story = story.replaceAll('**', '');
-    
-    final List<TextSpan> spans = [];
-    // Support both standard {} and Japanese fullwidth ｛｝ brackets
-    final RegExp exp = RegExp(r'([^\{\}｛｝]+)[\{｛]([^\{\}｛｝]+)[\}｝]');
-    int lastIndex = 0;
-
-    for (final Match match in exp.allMatches(story)) {
-      // Add text before match
-      if (match.start > lastIndex) {
-        spans.add(TextSpan(
-          text: story.substring(lastIndex, match.start),
-          style: const TextStyle(
-            color: Color(0xFF1F2937),
-            fontSize: 18,
-            height: 1.8,
-          ),
-        ));
-      }
-
-      final String word = match.group(1) ?? '';
-      final String meaning = match.group(2) ?? '';
-
-      // Add interactive word
-      spans.add(TextSpan(
-        text: word,
-        style: const TextStyle(
-          color: Color(0xFF1F2937),
-          fontSize: 18,
-          height: 1.8,
-          decoration: TextDecoration.underline,
-          decorationStyle: TextDecorationStyle.dotted,
-          decorationColor: Color(0xFF6366F1),
-        ),
-        recognizer: TapGestureRecognizer()
-          ..onTap = () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text(word),
-                content: Text(
-                  meaning,
-                  style: const TextStyle(fontSize: 18),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Tutup'),
-                  ),
-                ],
-              ),
-            );
-          },
-      ));
-
-      lastIndex = match.end;
-    }
-
-    // Add remaining text
-    if (lastIndex < story.length) {
-      spans.add(TextSpan(
-        text: story.substring(lastIndex),
-        style: const TextStyle(
-          color: Color(0xFF1F2937),
-          fontSize: 18,
-          height: 1.8,
-        ),
-      ));
-    }
-
-    // If no matches found (fallback)
-    if (spans.isEmpty) {
-      return Text(
-        story,
-        style: const TextStyle(
-          fontSize: 18,
-          height: 1.8,
-          color: Color(0xFF1F2937),
-        ),
-      );
-    }
-
-    return RichText(
-      text: TextSpan(children: spans),
-    );
-  }
 }
