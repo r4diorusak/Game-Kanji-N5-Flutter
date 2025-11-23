@@ -222,26 +222,36 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                         isLearned: isLearned,
                         onLearnedTap: _toggleLearned,
                         child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                            Text(
-                              vocab.word,
-                              style: const TextStyle(
-                                fontSize: 100,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1F2937),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  vocab.word,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 64,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1F2937),
+                                  ),
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              vocab.reading,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                color: Color(0xFF6B7280),
+                              const SizedBox(height: 16),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  vocab.reading,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Color(0xFF6B7280),
+                                  ),
+                                ),
                               ),
-                            ),
                             const SizedBox(height: 40),
                             const Text(
                               'Ketuk untuk melihat arti',
@@ -254,6 +264,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                           ),
                         ),
                       ),
+                    ),
                       back: _buildCardFace(
                         isLearned: isLearned,
                         onLearnedTap: _toggleLearned,
