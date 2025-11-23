@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../data/particle_questions.dart';
+import 'dart:math';
 
 class ParticleGameScreen extends StatefulWidget {
   const ParticleGameScreen({super.key});
@@ -14,38 +16,19 @@ class _ParticleGameScreenState extends State<ParticleGameScreen> {
   bool _showResult = false;
   bool _isCorrect = false;
 
-  final List<Map<String, dynamic>> _questions = [
-    {
-      'sentence': '私___学生です。',
-      'options': ['は', 'を', 'に', 'で'],
-      'correct': 'は',
-      'translation': 'Saya adalah pelajar',
-    },
-    {
-      'sentence': '本___読みます。',
-      'options': ['は', 'を', 'に', 'で'],
-      'correct': 'を',
-      'translation': 'Membaca buku',
-    },
-    {
-      'sentence': '学校___行きます。',
-      'options': ['は', 'を', 'に', 'で'],
-      'correct': 'に',
-      'translation': 'Pergi ke sekolah',
-    },
-    {
-      'sentence': '図書館___勉強します。',
-      'options': ['は', 'を', 'に', 'で'],
-      'correct': 'で',
-      'translation': 'Belajar di perpustakaan',
-    },
-    {
-      'sentence': '友達___会います。',
-      'options': ['は', 'を', 'に', 'で'],
-      'correct': 'に',
-      'translation': 'Bertemu dengan teman',
-    },
-  ];
+  List<Map<String, dynamic>> _questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _generateQuestions();
+  }
+
+  void _generateQuestions() {
+    final random = Random();
+    // Ambil semua soal dan acak urutannya
+    _questions = List.from(particleQuestions)..shuffle(random);
+  }
 
   void _checkAnswer() {
     if (_selectedParticle == null) return;
@@ -94,6 +77,7 @@ class _ParticleGameScreenState extends State<ParticleGameScreen> {
             onPressed: () {
               Navigator.pop(context);
               setState(() {
+                _generateQuestions();
                 _currentQuestion = 0;
                 _score = 0;
                 _selectedParticle = null;

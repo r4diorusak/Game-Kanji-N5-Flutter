@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../data/verb_data.dart';
+import '../utils/verb_conjugator.dart';
+import 'dart:math';
 
 class ConjugationGameScreen extends StatefulWidget {
   const ConjugationGameScreen({super.key});
@@ -14,48 +17,88 @@ class _ConjugationGameScreenState extends State<ConjugationGameScreen> {
   bool _showResult = false;
   bool _isCorrect = false;
 
-  final List<Map<String, dynamic>> _questions = [
-    {
-      'word': '食べます',
-      'from': 'Bentuk Masu',
-      'to': 'Bentuk Ta (Lampau)',
-      'options': ['食べた', '食べて', '食べない', '食べよう'],
-      'correct': '食べた',
-      'meaning': 'makan',
-    },
-    {
-      'word': '行きます',
-      'from': 'Bentuk Masu',
-      'to': 'Bentuk Te',
-      'options': ['行った', '行って', '行かない', '行こう'],
-      'correct': '行って',
-      'meaning': 'pergi',
-    },
-    {
-      'word': '大きい',
-      'from': 'Bentuk Biasa',
-      'to': 'Bentuk Negatif',
-      'options': ['大きくない', '大きかった', '大きくて', '大きいです'],
-      'correct': '大きくない',
-      'meaning': 'besar',
-    },
-    {
-      'word': '見ます',
-      'from': 'Bentuk Masu',
-      'to': 'Bentuk Nai (Negatif)',
-      'options': ['見ない', '見た', '見て', '見よう'],
-      'correct': '見ない',
-      'meaning': 'melihat',
-    },
-    {
-      'word': '高い',
-      'from': 'Bentuk Biasa',
-      'to': 'Bentuk Lampau',
-      'options': ['高かった', '高くない', '高くて', '高いです'],
-      'correct': '高かった',
-      'meaning': 'mahal/tinggi',
-    },
-  ];
+  List<Map<String, dynamic>> _questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _generateQuestions();
+  }
+
+  void _generateQuestions() {
+    final random = Random();
+    final List<VerbModel> shuffledVerbs = List.from(verbData)..shuffle(random);
+    final selectedVerbs = shuffledVerbs.take(50).toList();
+
+    _questions = selectedVerbs.map((verb) {
+      final type = random.nextInt(4); // 0: Masu, 1: Te, 2: Ta, 3: Nai
+      
+      String fromForm = 'Bentuk Kamus';
+      String toForm = '';
+      String questionWord = verb.dictionary;
+      String correctAnswer = '';
+      List<String> options = [];
+
+      switch (type) {
+        case 0: // Masu
+          toForm = 'Bentuk Masu';
+          correctAnswer = VerbConjugator.toMasu(verb);
+          options = [
+            correctAnswer,
+            VerbConjugator.toTe(verb),
+            VerbConjugator.toNai(verb),
+            '${verb.dictionary}ます' // Fake
+          ];
+          break;
+        case 1: // Te
+          toForm = 'Bentuk Te';
+          correctAnswer = VerbConjugator.toTe(verb);
+          options = [
+            correctAnswer,
+            VerbConjugator.toTa(verb),
+            VerbConjugator.toMasu(verb),
+            '${verb.dictionary}て' // Fake
+          ];
+          break;
+        case 2: // Ta
+          toForm = 'Bentuk Ta (Lampau)';
+          correctAnswer = VerbConjugator.toTa(verb);
+          options = [
+            correctAnswer,
+            VerbConjugator.toTe(verb),
+            VerbConjugator.toNai(verb),
+            '${verb.dictionary}た' // Fake
+          ];
+          break;
+        case 3: // Nai
+          toForm = 'Bentuk Nai (Negatif)';
+          correctAnswer = VerbConjugator.toNai(verb);
+          options = [
+            correctAnswer,
+            VerbConjugator.toMasu(verb),
+            VerbConjugator.toTe(verb),
+            '${verb.dictionary}ない' // Fake
+          ];
+          break;
+      }
+
+      // Ensure unique options and shuffle
+      options = options.toSet().toList();
+      while (options.length < 4) {
+        options.add('Option ${options.length}'); // Fallback
+      }
+      options.shuffle(random);
+
+      return {
+        'word': questionWord,
+        'from': fromForm,
+        'to': toForm,
+        'options': options,
+        'correct': correctAnswer,
+        'meaning': verb.meaning,
+      };
+    }).toList();
+  }
 
   void _checkAnswer() {
     if (_selectedAnswer == null) return;
@@ -104,6 +147,7 @@ class _ConjugationGameScreenState extends State<ConjugationGameScreen> {
             onPressed: () {
               Navigator.pop(context);
               setState(() {
+                _generateQuestions();
                 _currentQuestion = 0;
                 _score = 0;
                 _selectedAnswer = null;

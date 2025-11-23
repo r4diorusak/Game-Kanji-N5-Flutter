@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../data/vocabulary_data.dart';
+import '../models/vocabulary_model.dart';
+import 'dart:math';
 
 class ExpressionMatchingGameScreen extends StatefulWidget {
   const ExpressionMatchingGameScreen({super.key});
@@ -14,38 +17,42 @@ class _ExpressionMatchingGameScreenState extends State<ExpressionMatchingGameScr
   bool _showResult = false;
   bool _isCorrect = false;
 
-  final List<Map<String, dynamic>> _questions = [
-    {
-      'situation': 'Bertemu teman di pagi hari',
-      'options': ['おはようございます', 'こんにちは', 'こんばんは', 'おやすみなさい'],
-      'correct': 'おはようございます',
-      'meaning': 'Selamat pagi',
-    },
-    {
-      'situation': 'Menerima sesuatu dari orang lain',
-      'options': ['ありがとうございます', 'すみません', 'いただきます', 'ごちそうさまでした'],
-      'correct': 'ありがとうございます',
-      'meaning': 'Terima kasih',
-    },
-    {
-      'situation': 'Sebelum makan',
-      'options': ['いただきます', 'ごちそうさまでした', 'おいしいです', 'ありがとうございます'],
-      'correct': 'いただきます',
-      'meaning': 'Saya makan (ungkapan sebelum makan)',
-    },
-    {
-      'situation': 'Meninggalkan rumah',
-      'options': ['いってきます', 'ただいま', 'いってらっしゃい', 'おかえりなさい'],
-      'correct': 'いってきます',
-      'meaning': 'Saya pergi (dan akan kembali)',
-    },
-    {
-      'situation': 'Meminta maaf karena mengganggu',
-      'options': ['すみません', 'ありがとうございます', 'どういたしまして', 'おねがいします'],
-      'correct': 'すみません',
-      'meaning': 'Maaf / Permisi',
-    },
-  ];
+  List<Map<String, dynamic>> _questions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _generateQuestions();
+  }
+
+  void _generateQuestions() {
+    final random = Random();
+    // Ambil 10 kosa kata acak
+    final List<VocabularyModel> shuffledVocab = List.from(vocabularyData)..shuffle(random);
+    final selectedVocab = shuffledVocab.take(10).toList();
+
+    _questions = selectedVocab.map((vocab) {
+      // Ambil 3 pilihan salah acak
+      final wrongOptions = vocabularyData
+          .where((v) => v.id != vocab.id)
+          .toList()
+          ..shuffle(random);
+      
+      final options = [
+        vocab.word, 
+        wrongOptions[0].word, 
+        wrongOptions[1].word, 
+        wrongOptions[2].word
+      ]..shuffle(random);
+
+      return {
+        'situation': vocab.meaning,
+        'options': options,
+        'correct': vocab.word,
+        'meaning': vocab.meaning,
+      };
+    }).toList();
+  }
 
   void _checkAnswer() {
     if (_selectedAnswer == null) return;
@@ -94,6 +101,7 @@ class _ExpressionMatchingGameScreenState extends State<ExpressionMatchingGameScr
             onPressed: () {
               Navigator.pop(context);
               setState(() {
+                _generateQuestions();
                 _currentQuestion = 0;
                 _score = 0;
                 _selectedAnswer = null;
