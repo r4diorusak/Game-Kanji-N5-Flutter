@@ -8,6 +8,7 @@ import 'screens/chokai_quiz_screen.dart';
 import 'screens/story_screen.dart';
 import 'screens/vocabulary_screen.dart';
 import 'screens/grammar_screen.dart';
+import 'screens/game_menu_screen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -53,6 +54,7 @@ class _MainScreenState extends State<MainScreen> {
     const KanjiScreen(),
     const VocabularyScreen(),
     const GrammarScreen(),
+    const GameMenuScreen(),
   ];
 
   @override
@@ -80,6 +82,10 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'Tata Bahasa',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.games),
+            label: 'Game',
           ),
         ],
       ),
