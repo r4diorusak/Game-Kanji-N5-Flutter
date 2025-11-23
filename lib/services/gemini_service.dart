@@ -59,8 +59,8 @@ Buatkan cerita pendek sederhana (5-8 kalimat) dalam bahasa Jepang yang menggunak
 Gunakan kosakata level N5.
 
 INSTRUKSI KHUSUS:
-Saya ingin pembaca bisa mengetuk setiap kata untuk melihat artinya.
-Tulis cerita dalam format: KataJepang{ArtiIndonesia}
+Saya ingin pembaca bisa mengetuk setiap kata untuk melihat cara baca dan artinya.
+Tulis cerita dalam format: KataJepang{CaraBaca(Hiragana) - ArtiIndonesia}
 Bungkus SETIAP kata/frasa dalam cerita dengan format tersebut.
 Jangan sertakan terjemahan terpisah atau Romaji.
 Jangan gunakan spasi antar format jika tidak perlu.
@@ -68,7 +68,7 @@ JANGAN ada kalimat pembuka seperti "Tentu", "Berikut cerita", "Halo", dll.
 LANGSUNG mulai dengan teks cerita Jepang.
 
 Contoh output:
-私{Saya}は{partikel}学生{murid}です{sopan}。今日{Hari ini}は{partikel}いい{bagus}天気{cuaca}です{sopan}。
+私{わたし - Saya}は{は - partikel}学生{がくせい - murid}です{です - sopan}。今日{きょう - Hari ini}は{は - partikel}いい{いい - bagus}天気{てんき - cuaca}です{です - sopan}。
 
 Format output:
 [Cerita dalam format custom]
