@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/kanji_model.dart';
+import '../models/vocabulary_model.dart';
 import '../services/gemini_service.dart';
 
 class ChokaiQuizScreen {
@@ -16,7 +17,7 @@ class ChokaiQuizScreen {
     required this.speak,
   });
 
-  Future<void> show(KanjiModel kanji) async {
+  Future<void> show(dynamic model) async {
     // Show loading
     showModalBottomSheet(
       context: context,
@@ -43,7 +44,19 @@ class ChokaiQuizScreen {
     );
 
     final service = GeminiService();
-    final quizData = await service.generateChokaiQuiz(kanji);
+    Map<String, dynamic> quizData;
+
+    try {
+      if (model is KanjiModel) {
+        quizData = await service.generateChokaiQuiz(model);
+      } else if (model is VocabularyModel) {
+        quizData = await service.generateChokaiQuizForVocab(model);
+      } else {
+        quizData = {'error': 'Tipe data tidak didukung'};
+      }
+    } catch (e) {
+      quizData = {'error': e.toString()};
+    }
     
     // Close loading
     if (context.mounted) Navigator.pop(context);

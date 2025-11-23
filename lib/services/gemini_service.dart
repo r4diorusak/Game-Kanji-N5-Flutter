@@ -1,6 +1,7 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:convert';
 import '../models/kanji_model.dart';
+import '../models/vocabulary_model.dart';
 
 class GeminiService {
   static const String _apiKey = 'AIzaSyCiOipfz4qcehF8SyGRnpkwBj-AJ2bx7_Y';
@@ -95,6 +96,51 @@ Pastikan output adalah JSON yang valid!
     }
   }
 
+  /// Generate cerita pendek untuk Vocabulary
+  Future<Map<String, dynamic>> generateShortStoryForVocab(VocabularyModel vocab) async {
+    final prompt = '''
+$_systemPrompt
+
+Buatkan cerita pendek sederhana (8-16 kalimat) dalam bahasa Jepang yang menggunakan kata "${vocab.word}" (baca: ${vocab.reading}, arti: ${vocab.meaning}).
+Gunakan kosakata level N5.
+
+INSTRUKSI KHUSUS:
+1. Tulis cerita dalam format: KataJepang{CaraBaca(Hiragana) - ArtiIndonesia}
+2. Bungkus SETIAP kata/frasa dalam cerita dengan format tersebut.
+3. Setelah cerita, buat 1 pertanyaan pemahaman dalam bahasa Indonesia
+4. Berikan 4 pilihan jawaban (A, B, C, D) dalam bahasa Indonesia
+5. Tentukan jawaban yang benar (index 0-3)
+
+JANGAN ada kalimat pembuka seperti "Tentu", "Berikut cerita", dll.
+LANGSUNG berikan output dalam format JSON berikut:
+
+{
+  "story": "[Cerita dalam format custom dengan {baca-arti}]",
+  "question": "[Pertanyaan pemahaman dalam bahasa Indonesia]",
+  "options": ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+  "correctAnswerIndex": 0
+}
+
+Contoh story:
+私{わたし - Saya}は{は - partikel}学生{がくせい - murid}です{です - sopan}。今日{きょう - Hari ini}は{は - partikel}いい{いい - bagus}天気{てんき - cuaca}です{です - sopan}。
+
+Pastikan output adalah JSON yang valid!
+''';
+
+    try {
+      print('🤖 Story Vocab: Mengirim request...');
+      final response = await _model.generateContent([Content.text(prompt)]);
+      print('✅ Story Vocab: Response diterima');
+      
+      final text = response.text ?? '';
+      final cleanText = text.replaceAll('```json', '').replaceAll('```', '').trim();
+      return _parseJson(cleanText);
+    } catch (e) {
+      print('❌ Story Vocab Error: $e');
+      return {'error': e.toString()};
+    }
+  }
+
   /// Generate Chokai Quiz (Listening Comprehension)
   Future<Map<String, dynamic>> generateChokaiQuiz(KanjiModel kanji) async {
     final prompt = '''
@@ -135,6 +181,44 @@ Catatan:
       return _parseJson(cleanText);
     } catch (e) {
       print('❌ Chokai Error: $e');
+      return {
+        "error": e.toString()
+      };
+    }
+  }
+
+  /// Generate Chokai Quiz untuk Vocabulary
+  Future<Map<String, dynamic>> generateChokaiQuizForVocab(VocabularyModel vocab) async {
+    final prompt = '''
+$_systemPrompt
+
+Buatkan soal latihan CHOKAI (Listening Comprehension) level N5 yang berkaitan dengan kata "${vocab.word}" (baca: ${vocab.reading}, arti: ${vocab.meaning}).
+
+Format Output HARUS JSON valid seperti ini:
+{
+  "story": "Teks cerita pendek bahasa Jepang (sekitar 4-6 kalimat) yang mengandung kata target. JANGAN gunakan format {baca-arti}, tulis teks Jepang biasa saja.",
+  "question": "Pertanyaan dalam bahasa Jepang tentang cerita di atas.",
+  "options": ["Pilihan A (Jepang)", "Pilihan B (Jepang)", "Pilihan C (Jepang)", "Pilihan D (Jepang)"],
+  "correctAnswerIndex": 0
+}
+
+Catatan:
+- correctAnswerIndex adalah 0 untuk A, 1 untuk B, dst.
+- Pastikan cerita dan pertanyaan menggunakan kosakata N5.
+- Output HANYA JSON, tanpa teks lain.
+''';
+
+    try {
+      print('🤖 Chokai Vocab: Mengirim request...');
+      final response = await _model.generateContent([Content.text(prompt)]);
+      print('✅ Chokai Vocab: Response diterima');
+      
+      final text = response.text ?? '{}';
+      final cleanText = text.replaceAll('```json', '').replaceAll('```', '').trim();
+      
+      return _parseJson(cleanText);
+    } catch (e) {
+      print('❌ Chokai Vocab Error: $e');
       return {
         "error": e.toString()
       };

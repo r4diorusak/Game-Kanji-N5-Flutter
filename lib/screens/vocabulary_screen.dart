@@ -5,7 +5,7 @@ import '../models/vocabulary_model.dart';
 import '../widgets/flip_card.dart';
 import '../screens/chokai_quiz_screen.dart';
 import '../screens/story_screen.dart';
-import '../screens/video_learning_screen.dart';
+
 
 class VocabularyScreen extends StatefulWidget {
   const VocabularyScreen({super.key});
@@ -105,30 +105,26 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
   }
 
   void _generateAndShowStory(VocabularyModel vocab) {
-    // Convert VocabularyModel to a format compatible with StoryScreen
     final storyScreen = StoryScreen(
       context: context,
       flutterTts: flutterTts,
       getIsSpeaking: () => isSpeaking,
       speak: _speak,
     );
-    // Note: We'll need to modify StoryScreen to accept vocabulary
-    // For now, we'll show a placeholder
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fitur cerita untuk kosa kata segera hadir!')),
-    );
+    storyScreen.show(vocab);
   }
 
   void _generateAndShowChokai(VocabularyModel vocab) {
-    // Similar to story
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fitur chokai untuk kosa kata segera hadir!')),
+    final chokaiScreen = ChokaiQuizScreen(
+      context: context,
+      flutterTts: flutterTts,
+      getIsSpeaking: () => isSpeaking,
+      speak: _speak,
     );
+    chokaiScreen.show(vocab);
   }
 
-  void _generateAndShowVideo(VocabularyModel vocab) {
-    VideoLearningScreen(context: context).show(vocab);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -361,20 +357,7 @@ class _VocabularyScreenState extends State<VocabularyScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  OutlinedButton.icon(
-                                    onPressed: () => _generateAndShowVideo(vocab),
-                                    icon: const Icon(Icons.play_circle_outline, size: 20),
-                                    label: const Text('Latihan Video (AI)'),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: const Color(0xFF10B981),
-                                      side: const BorderSide(color: Color(0xFF10B981)),
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                  ),
+
                                 ],
                               ),
                             ),

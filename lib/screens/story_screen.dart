@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/kanji_model.dart';
+import '../models/vocabulary_model.dart';
 import '../services/gemini_service.dart';
 
 class StoryScreen {
@@ -17,7 +18,7 @@ class StoryScreen {
     required this.speak,
   });
 
-  Future<void> show(KanjiModel kanji) async {
+  Future<void> show(dynamic model) async {
     // Show loading
     showModalBottomSheet(
       context: context,
@@ -45,7 +46,19 @@ class StoryScreen {
     );
 
     final service = GeminiService();
-    final storyData = await service.generateShortStory(kanji);
+    Map<String, dynamic> storyData;
+
+    try {
+      if (model is KanjiModel) {
+        storyData = await service.generateShortStory(model);
+      } else if (model is VocabularyModel) {
+        storyData = await service.generateShortStoryForVocab(model);
+      } else {
+        storyData = {'error': 'Tipe data tidak didukung'};
+      }
+    } catch (e) {
+      storyData = {'error': e.toString()};
+    }
     print('📝 Raw Story Output:\n$storyData'); // Debug log
 
     // Close loading
