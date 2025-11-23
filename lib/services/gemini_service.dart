@@ -1,4 +1,5 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:convert';
 import '../models/kanji_model.dart';
 
 class GeminiService {
@@ -82,6 +83,61 @@ Format output:
     } catch (e) {
       print('❌ Story Error: $e');
       return 'Error: ${e.toString()}';
+    }
+  }
+
+  /// Generate Chokai Quiz (Listening Comprehension)
+  Future<Map<String, dynamic>> generateChokaiQuiz(KanjiModel kanji) async {
+    final prompt = '''
+$_systemPrompt
+
+Buatkan soal latihan CHOKAI (Listening Comprehension) level N5 yang berkaitan dengan kanji "${kanji.character}" (arti: ${kanji.meaning}).
+
+Format Output HARUS JSON valid seperti ini:
+{
+  "story": "Teks cerita pendek bahasa Jepang (sekitar 4-6 kalimat) yang mengandung kanji target. JANGAN gunakan format {baca-arti}, tulis teks Jepang biasa saja.",
+  "question": "Pertanyaan dalam bahasa Jepang tentang cerita di atas.",
+  "options": ["Pilihan A (Jepang)", "Pilihan B (Jepang)", "Pilihan C (Jepang)", "Pilihan D (Jepang)"],
+  "correctAnswerIndex": 0
+}
+
+Catatan:
+- correctAnswerIndex adalah 0 untuk A, 1 untuk B, dst.
+- Pastikan cerita dan pertanyaan menggunakan kosakata N5.
+- Output HANYA JSON, tanpa teks lain.
+''';
+
+    try {
+      print('🤖 Chokai: Mengirim request...');
+      final response = await _model.generateContent([Content.text(prompt)]);
+      print('✅ Chokai: Response diterima');
+      
+      final text = response.text ?? '{}';
+      // Clean markdown code blocks if present
+      final cleanText = text.replaceAll('```json', '').replaceAll('```', '').trim();
+      
+      // Simple JSON parsing (in a real app, use dart:convert)
+      // For now, we'll rely on the AI following instructions, but we need to import dart:convert
+      // Since we can't easily add imports to the top of the file with this tool without reading it all again,
+      // we will assume the user has dart:convert or we will add it.
+      // Wait, I can't add imports easily here. I'll use a regex parser or just add the import in a separate step.
+      // Actually, I should add the import first.
+      
+      return _parseJson(cleanText);
+    } catch (e) {
+      print('❌ Chokai Error: $e');
+      return {
+        "error": e.toString()
+      };
+    }
+  }
+
+  Map<String, dynamic> _parseJson(String jsonString) {
+    try {
+      return jsonDecode(jsonString) as Map<String, dynamic>;
+    } catch (e) {
+      print('❌ JSON Parse Error: $e');
+      return {};
     }
   }
 }
