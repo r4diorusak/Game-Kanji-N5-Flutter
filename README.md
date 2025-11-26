@@ -2,102 +2,167 @@
   <img src="assets/icon/icon.png" width="150" alt="Kanji N5 Gemini Logo">
 </p>
 
-<h1 align="center">Kanji N5 Gemini</h1>
+<h1 align="center">Kanji N5 Gemini - Master Japanese N5</h1>
 
 <p align="center">
-  Sebuah aplikasi Flutter yang dirancang untuk membantu pengguna mempelajari dan menguasai Kanji, tata bahasa, dan kosakata bahasa Jepang setara level N5. Aplikasi ini dilengkapi dengan berbagai fitur interaktif, termasuk kuis, permainan, dan asisten AI yang didukung oleh Google Gemini untuk menjawab pertanyaan terkait bahasa Jepang.
+  <strong>Kanji N5 Gemini</strong> adalah aplikasi Flutter komprehensif yang dirancang sebagai teman belajar all-in-one untuk siapa saja yang ingin menguasai dasar-dasar bahasa Jepang, khususnya pada level JLPT N5. Aplikasi ini menggabungkan metode pembelajaran tradisional dengan teknologi AI modern untuk menciptakan pengalaman belajar yang menarik dan efektif.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter Badge">
+  <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart Badge">
+  <img src="https://img.shields.io/badge/Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini Badge">
 </p>
 
 ---
 
 ## Daftar Isi
 
+- [Tujuan Proyek](#tujuan-proyek)
 - [Fitur Utama](#fitur-utama)
-- [Teknologi yang Digunakan](#teknologi-yang-digunakan)
+- [Arsitektur Proyek](#arsitektur-proyek)
+- [Teknologi & Dependensi](#teknologi--dependensi)
 - [Tangkapan Layar](#tangkapan-layar)
-- [Persyaratan](#persyaratan)
-- [Instalasi](#instalasi)
+- [Persyaratan Sistem](#persyaratan-sistem)
+- [Panduan Instalasi](#panduan-instalasi)
+- [Cara Berkontribusi](#cara-berkontribusi)
 - [Penulis](#penulis)
+
+---
+
+## Tujuan Proyek
+
+Proyek ini dibuat untuk mengatasi tantangan umum yang dihadapi oleh pemula saat belajar bahasa Jepang:
+1.  **Fragmentasi Sumber Belajar**: Pelajar sering kali harus menggunakan beberapa aplikasi atau buku yang berbeda untuk Kanji, kosakata, dan tata bahasa. Aplikasi ini menyatukan semuanya di satu tempat.
+2.  **Pembelajaran Pasif**: Belajar dengan hanya membaca bisa membosankan. Fitur interaktif seperti kuis dan permainan dirancang untuk membuat proses belajar menjadi lebih aktif dan menyenangkan.
+3.  **Kurangnya Bantuan Instan**: Ketika muncul pertanyaan spesifik, pelajar sering kesulitan mencari jawaban yang relevan. **Asisten AI Gemini** hadir untuk memberikan jawaban dan penjelasan instan, seolah-olah memiliki tutor pribadi.
 
 ---
 
 ## Fitur Utama
 
-- **Pembelajaran Kanji**: Kartu balik (flip cards) untuk mempelajari Kanji N5 beserta cara baca (Onyomi & Kunyomi) dan artinya.
-- **Pembelajaran Kosakata**: Daftar kosakata penting untuk level N5.
-- **Pembelajaran Tata Bahasa**: Penjelasan pola kalimat dan tata bahasa N5 yang mudah dipahami.
-- **AI Chat Assistant (Gemini)**: Ajukan pertanyaan apa pun seputar bahasa Jepang (Kanji, kosakata, tata bahasa) dan dapatkan jawaban cerdas dari AI Gemini.
-- **Kuis Choukai (Mendengar)**: Latih kemampuan mendengar Anda dengan kuis pilihan ganda berbasis audio.
-- **Permainan Mencocokkan Ekspresi**: Permainan interaktif untuk menguji pemahaman ekspresi dan artinya.
-- **Permainan Konjugasi Kata Kerja**: Latih kemampuan Anda dalam mengubah bentuk kata kerja bahasa Jepang.
-- **Permainan Partikel**: Uji pemahaman Anda tentang penggunaan partikel dalam kalimat.
-- **Pembelajaran Video**: Belajar melalui video yang terintegrasi langsung di dalam aplikasi.
-- **Mode Cerita**: Belajar bahasa Jepang melalui cerita interaktif.
+Aplikasi ini dikemas dengan berbagai fitur untuk mencakup semua aspek pembelajaran N5:
+
+-   **Flashcard Kanji Interaktif**: Pelajari 103 Kanji esensial untuk level N5. Setiap kartu menampilkan Kanji, arti, serta cara baca Onyomi dan Kunyomi.
+-   **Database Kosakata & Tata Bahasa**: Akses daftar lengkap kosakata dan pola tata bahasa N5 yang disajikan dengan jelas dan ringkas.
+-   **Asisten AI Berbasis Gemini**: Punya pertanyaan? Manfaatkan kekuatan model AI generatif Google Gemini untuk bertanya apa saja tentang bahasa Jepang, mulai dari arti kata hingga penggunaan partikel yang rumit.
+-   **Permainan Edukatif**:
+    -   **Konjugasi Kata Kerja**: Latih refleks Anda dalam mengubah bentuk kata kerja (bentuk -masu, -te, kamus, dll.).
+    -   **Mencocokkan Ekspresi**: Pasangkan ungkapan bahasa Jepang dengan terjemahan yang benar.
+    -   **Teka-teki Partikel**: Isi partikel yang hilang (は, が, を, に, で, etc.) dalam kalimat untuk mengasah pemahaman Anda.
+-   **Latihan Mendengar (Choukai)**: Tingkatkan kemampuan mendengar Anda dengan kuis audio di mana Anda harus memilih jawaban yang benar berdasarkan dialog singkat.
+-   **Integrasi Video YouTube**: Belajar dari konten video pilihan tanpa harus meninggalkan aplikasi, berkat pemutar YouTube yang terintegrasi.
+-   **Mode Cerita**: Benamkan diri Anda dalam cerita pendek untuk melihat bagaimana tata bahasa dan kosakata digunakan dalam konteks nyata.
 
 ---
 
-## Teknologi yang Digunakan
+## Arsitektur Proyek
 
-### Framework & Bahasa Pemrograman
-- **Flutter**: Framework UI dari Google untuk membangun aplikasi mobile, web, dan desktop dari satu basis kode.
-- **Dart**: Bahasa pemrograman yang digunakan untuk mengembangkan aplikasi Flutter.
+Proyek ini mengikuti arsitektur berorientasi fitur yang modular untuk kemudahan pemeliharaan dan skalabilitas. Struktur utama dalam direktori `lib` adalah sebagai berikut:
 
-### API & Layanan
-- **Google Generative AI (Gemini)**: Digunakan sebagai dasar untuk fitur AI Chat Assistant, memungkinkan interaksi tanya jawab yang dinamis.
+-   **/data**: Berisi file-file Dart yang menyimpan data statis aplikasi, seperti daftar kanji, soal kuis, kosakata, dan tata bahasa.
+-   **/models**: Mendefinisikan objek dan struktur data utama aplikasi (misalnya, `Kanji`, `Vocabulary`, `Grammar`).
+-   **/screens**: Setiap file di sini mewakili satu layar atau halaman dalam aplikasi, mengelola UI dan state untuk fitur tertentu (misalnya, `AiChatScreen`, `KanjiScreen`).
+-   **/services**: Mengelola logika untuk berkomunikasi dengan layanan eksternal. Saat ini berisi `GeminiService` yang menangani semua interaksi dengan Google Gemini API.
+-   **/widgets**: Kumpulan widget kustom yang dapat digunakan kembali di berbagai layar (misalnya, `FlipCard`, `ChatItemWidget`) untuk menjaga konsistensi UI.
+-   **/utils**: Berisi fungsi-fungsi pembantu dan utilitas, seperti `VerbConjugator` untuk logika konjugasi kata kerja.
 
-### State Management
-- **StatefulWidget & `setState`**: Pendekatan manajemen state bawaan dari Flutter yang digunakan untuk mengelola state lokal pada widget.
+---
 
-### Dependensi Utama (`pubspec.yaml`)
-- `google_generative_ai`: Untuk berinteraksi dengan Google Gemini API.
-- `flutter_markdown`: Untuk merender teks dalam format Markdown dari respons AI.
-- `flutter_tts`: Untuk fitur Text-to-Speech, mengubah teks menjadi suara.
-- `youtube_player_flutter`: Untuk memutar video YouTube di dalam aplikasi.
-- `cupertino_icons`: Menyediakan set ikon gaya iOS.
+## Teknologi & Dependensi
+
+-   **Framework**: **Flutter (v3.x)** - Untuk membangun UI yang indah dan berperforma tinggi secara cross-platform.
+-   **Bahasa**: **Dart (v3.x)** - Bahasa modern yang dioptimalkan untuk UI.
+-   **AI & Machine Learning**:
+    -   `google_generative_ai`: Klien Dart resmi untuk berinteraksi dengan **Google Gemini API**.
+-   **UI & Multimedia**:
+    -   `flutter_markdown`: Merender respons dari Gemini yang diformat dalam Markdown.
+    -   `youtube_player_flutter`: Menyematkan pemutar video YouTube asli di dalam aplikasi.
+-   **Utilitas**:
+    -   `flutter_tts`: Mengimplementasikan fungsionalitas Text-to-Speech.
+    -   `cupertino_icons`: Menyediakan ikon standar iOS.
+-   **Dev Tools**:
+    -   `flutter_launcher_icons`: Membuat ikon aplikasi secara otomatis.
+    -   `flutter_native_splash`: Mengelola layar splash screen.
 
 ---
 
 ## Tangkapan Layar
 
-*(Disarankan untuk menambahkan beberapa gambar tangkapan layar aplikasi di sini untuk memberikan gambaran visual)*
+*(Sangat disarankan untuk menambahkan beberapa gambar atau GIF yang menampilkan fitur-fitur utama aplikasi di sini.)*
+
+<p align="center">
+  <!-- <img src="docs/screenshot1.png" width="250"> -->
+  <!-- <img src="docs/screenshot2.png" width="250"> -->
+  <!-- <img src="docs/screenshot3.png" width="250"> -->
+</p>
 
 ---
 
-## Persyaratan
+## Persyaratan Sistem
 
-- **Flutter SDK**: Versi 3.x atau lebih tinggi.
-- **Dart SDK**: Versi 3.x atau lebih tinggi.
-- **Android Studio** atau **Visual Studio Code** dengan ekstensi Flutter.
-- **API Key untuk Google Gemini**: Anda perlu mendapatkan API key dari [Google AI Studio](https://aistudio.google.com/) dan memasukkannya ke dalam kode (biasanya di `gemini_service.dart`).
+-   **Flutter SDK**: Versi 3.x atau lebih tinggi.
+-   **Dart SDK**: Versi 3.x atau lebih tinggi.
+-   **IDE**: Android Studio atau Visual Studio Code (dengan ekstensi Flutter & Dart).
+-   **Perangkat**: Emulator Android (API 21+) atau perangkat fisik.
 
 ---
 
-## Instalasi
+## Panduan Instalasi
 
-1.  **Clone repositori ini:**
-    ```bash
+Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
+
+1.  **Clone Repositori**
+    ```sh
     git clone https://github.com/r4diorusak/Game-Kanji-N5-Flutter.git
     cd Game-Kanji-N5-Flutter
     ```
 
-2.  **Install dependensi:**
-    ```bash
+2.  **Dapatkan Dependensi Flutter**
+    ```sh
     flutter pub get
     ```
 
-3.  **Masukkan API Key Gemini Anda:**
-    - Buka file `lib/services/gemini_service.dart`.
-    - Ganti nilai placeholder `YOUR_API_KEY` dengan API key Anda yang sebenarnya.
+3.  **Konfigurasi API Key Gemini**
+    -   Pertama, dapatkan API key Anda dari **[Google AI Studio](https://aistudio.google.com/)**.
+    -   Buka file `lib/services/gemini_service.dart`.
+    -   Temukan baris berikut dan ganti `YOUR_API_KEY` dengan kunci yang Anda dapatkan:
+        ```dart
+        final apiKey = 'YOUR_API_KEY';
+        ```
 
-4.  **Jalankan aplikasi:**
-    ```bash
+4.  **Jalankan Aplikasi**
+    ```sh
     flutter run
     ```
+    Pilih perangkat yang tersedia untuk menjalankan aplikasi.
+
+---
+
+## Cara Berkontribusi
+
+Kontribusi dari komunitas sangat kami hargai! Jika Anda ingin membantu, silakan:
+
+1.  **Fork** repositori ini.
+2.  Buat **branch baru** untuk fitur atau perbaikan Anda (`git checkout -b fitur/nama-fitur`).
+3.  **Commit** perubahan Anda (`git commit -m 'Menambahkan fitur X'`).
+4.  **Push** ke branch Anda (`git push origin fitur/nama-fitur`).
+5.  Buka **Pull Request**.
+
+Beberapa area yang bisa dikembangkan:
+-   Menambahkan konten untuk level JLPT N4.
+-   Menyimpan progres belajar pengguna.
+-   Meningkatkan UI/UX.
+-   Menambahkan lebih banyak variasi kuis.
 
 ---
 
 ## Penulis
 
-- **Nama**: Khairul Adha S.Kom
-- **Email**: r4dioz.88@gmail.com
-- **GitHub**: [r4diorusak](https://github.com/r4diorusak)
+-   **Nama**: Khairul Adha S.Kom
+-   **Email**: r4dioz.88@gmail.com
+-   **GitHub**: [![GitHub](https://img.shields.io/badge/GitHub-r4diorusak-blue?style=flat-square&logo=github)](https://github.com/r4diorusak)
+
+---
+
+*Proyek ini dibuat sebagai bagian dari portofolio dan sebagai alat bantu bagi sesama pembelajar bahasa Jepang. Semoga bermanfaat!*
