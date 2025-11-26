@@ -4,7 +4,7 @@ import '../models/kanji_model.dart';
 import '../models/vocabulary_model.dart';
 
 class GeminiService {
-  static const String _apiKey = 'AIzaSyCiOipfz4qcehF8SyGRnpkwBj-AJ2bx7_Y';
+  static const String _apiKey = '';
   late final GenerativeModel _model;
 
   static const String _systemPrompt = 
