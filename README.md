@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icon/icon.png" width="150" alt="Kanji N5 Gemini Logo">
+  <img src="https://raw.githubusercontent.com/r4diorusak/Game-Kanji-N5-Flutter/master/assets/icon/app_icon.png" width="150" alt="Kanji N5 Gemini Logo">
 </p>
 
 <h1 align="center">Kanji N5 Gemini - Master Japanese N5</h1>
